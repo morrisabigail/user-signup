@@ -30,7 +30,7 @@ def build(u_error,p_error,v_error,e_error):
         <!DOCTYPE html>
         <html>
         <head>
-            <title>FlickList</title>
+            <title>Sign Up</title>
             <style type="text/css">
                 span{
                     color: red;
