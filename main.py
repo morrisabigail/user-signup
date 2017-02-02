@@ -74,38 +74,31 @@ class MainHandler(webapp2.RequestHandler):
 
 class Welcome(webapp2.RequestHandler):
     def post(self):
+
         username = self.request.get('username')
         password = self.request.get('password')
         verify = self.request.get('verify')
         email = self.request.get('email')
 
-        #verify password
-        if re.match("^.{3,20}$",password):
+        if self.username_valid(username):
+            u_error = ''
+        else:
+            u_error = "That's not a valid username"
+
+        if self.password_verify(password):
             p_error = ''
         else:
             p_error = "That's not a valid password"
 
-        #verify password and verify match
-        if password == verify:
+        if self.password_match(password, verify):
             v_error = ''
         else:
             v_error = "Your passwords didn't match"
 
-        #verify proper email if email
-        if re.match("^[\S]+@[\S]+.[\S]+$",email):
-            e_error = ''
-        elif email == '':
+        if self.email_valid(email):
             e_error = ''
         else:
             e_error = "That's not a valid email"
-
-
-        #yes but redirect to /welcome
-        if re.match("^[a-zA-Z0-9_-]{3,20}$",username):
-            u_error = ''
-        else:
-            u_error = "That's not a valid username"
-            #self.response.write("<h1>Welcome, {} </h1>".format(username))
 
 
         if u_error == p_error == v_error == e_error:
@@ -113,6 +106,34 @@ class Welcome(webapp2.RequestHandler):
         else:
             more_errors = build(u_error,p_error,v_error,e_error)
             self.response.write(more_errors)
+
+        #verify password
+    def password_verify(self,password):
+        if re.match(r"^.{3,20}$",password):
+            return True
+        return False
+
+        #verify password and verify match
+    def password_match(self,password,verify):
+        if password == verify:
+            return True
+        return False
+
+        #verify proper email if email
+
+    def email_valid(self,email):
+        if re.match(r"^[\S]+@[\S]+.[\S]+$",email):
+            return True
+        elif email == '':
+            return True
+        return False
+
+    def username_valid(self,username):
+        if re.match(r"^[a-zA-Z0-9_-]{3,20}$",username):
+            return True
+        return False
+
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
